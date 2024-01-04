@@ -1,23 +1,34 @@
-var fecthMasonry = function (container, items, columns) {
-    var CONTAINER_EL = document.querySelector("#" + container);
-    var WRAPPER_CONTAINER_EL = CONTAINER_EL.parentNode;
-    var ITEMS_ELS = document.querySelectorAll("." + items);
-    CONTAINER_EL.parentNode.removeChild(CONTAINER_EL);
-    var NEW_CONTAINER_EL = document.createElement('div');
-    NEW_CONTAINER_EL.setAttribute('id', container);
-    NEW_CONTAINER_EL.classList.add('masonry-layout', "columns-" + columns);
-    WRAPPER_CONTAINER_EL.appendChild(NEW_CONTAINER_EL);
-    for (var i = 1; i <= columns; i++) {
-        var COLUMN = document.createElement('div');
-        COLUMN.classList.add("masonry-column-" + i);
-        NEW_CONTAINER_EL.appendChild(COLUMN);
-    }
-    var countColumn = 1;
-    ITEMS_ELS.forEach(function (item) {
-        var col = document.querySelector("#" + container + " > .masonry-column-" + countColumn);
-        col.appendChild(item);
-        countColumn = countColumn < columns ? countColumn + 1 : 1;
-    });
-};
+// external js: masonry.pkgd.js
 
-fecthMasonry('masonry', 'image', 3);
+var grid = document.querySelector('.grid');
+var msnry = new Masonry( grid, {
+  columnWidth: 160,
+  itemSelector: '.grid-item'
+});
+
+var appendButton = document.querySelector('.append-button');
+appendButton.addEventListener( 'click', function() {
+  // create new item elements
+  var elems = [];
+  var fragment = document.createDocumentFragment();
+  for ( var i = 0; i < 3; i++ ) {
+    var elem = getItemElement();
+    fragment.appendChild( elem );
+    elems.push( elem );
+  }
+  // append elements to container
+  grid.appendChild( fragment );
+  // add and lay out newly appended elements
+  msnry.appended( elems );
+});
+
+// create <div class="grid-item"></div>
+function getItemElement() {
+  var elem = document.createElement('div');
+  var wRand = Math.random();
+  var hRand = Math.random();
+  var widthClass = wRand > 0.8 ? 'grid-item--width3' : wRand > 0.6 ? 'grid-item--width2' : '';
+  var heightClass = hRand > 0.85 ? 'grid-item--height4' : hRand > 0.6 ? 'grid-item--height3' : hRand > 0.35 ? 'grid-item--height2' : '';
+  elem.className = 'grid-item ' + widthClass + ' ' + heightClass;
+  return elem;
+}
